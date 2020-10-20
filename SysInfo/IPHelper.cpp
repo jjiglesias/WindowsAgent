@@ -344,6 +344,8 @@ BOOL CIPHelper::GetNetworkAdapters(CNetworkAdapterList *pList)
 	{
 	}
 
+	_dump_mib_if_table2(&pIfTable);
+	
 	// Call GetIfTable2Ex for each interface
 	for (dwIndex = 0; dwIndex < pIfTable->NumEntries; dwIndex++)
 	{
@@ -1000,20 +1002,50 @@ LPCTSTR CIPHelper::GetIfType(UINT uType)
 //   ULONG64                    OutQLen;
 // } MIB_IF_ROW2, *PMIB_IF_ROW2;
  
-#ifdef _DEBUG
 	void CIPHelper::_dump_mib_if_table2(PMIB_IF_TABLE2 *pIfTable)
 	{
 	  PMIB_IF_ROW2 pIfEntry;
 	  ULONG dwIndex;
+	  CNetworkAdapter cAdapter;
+	  CString csMac;
 
 	  m_pLogger->log( LOG_PRIORITY_DEBUG, _T( "SYSINFO => Dumping MIB If Table2"));
 	  
 	  for (dwIndex = 0; dwIndex < pIfTable->NumEntries; dwIndex++)
 	    {
 	      pIfEntry = (MIB_IF_ROW2 *)&(pIfTable->Table[dwIndex]);
-	      AddLog();
+	      
+	      if (pIfEntry->Type == IF_TYPE_SOFTWARE_LOOPBACK)
+		continue;
+	      
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("    "));
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        "));
+	      // Get the Index
+	      cAdapter.SetIfIndex(pIfEntry->InterfaceIndex);
+	      // Get the type
+	      cAdapter.SetType(GetAdapterType(pIfEntry->Type));
+	      // Get the MIB type
+	      cAdapter.SetTypeMIB(GetIfType(pIfEntry->Type));
+	      // Get the description;
+	      cAdapter.SetDescription(pIfEntry->Description);
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("    Interface Idx: %l", cAdapter.GetIfIndex()));
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Alias: %s", pIfEntry->Alias));
+
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Description: %s", cAdapter.GetDescription()));
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Type: %s", cAdapter.GetType()));
+
+	      csMAC.Format(_T("%02X:%02X:%02X:%02X:%02X:%02X"),
+			   pIfEntry->PhysicalAddress[0], pIfEntry->PhysicalAddress[1],
+			   pIfEntry->PhysicalAddress[2], pIfEntry->PhysicalAddress[3],
+			   pIfEntry->PhysicalAddress[4], pIfEntry->PhysicalAddress[5]);
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        MAC: %s", (LPCTSTR)csMAC));
+
+	      cAdapter.SetIpHelperStatus(pIfEntry->OperStatus);
+	      cAdapter.SetSpeed(pIfEntry->TransmitLinkSpeed);
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Status: %s", cAdapter.GetOperationalStatus()));
+	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Speed: %s", cAdapter.GetSpeed()));
+	    }	      
 	      // AGENT => Loading plug-in(s)
 	      //     DLL PLUGIN => Searching for Plug-in DLL(s) in folder <C:\Program Files\OCS Inventory Agent\plugins>
-	    }
-#endif	
+	}
 }
