@@ -58,7 +58,7 @@ public: // Methods
 	static LPCTSTR GetAdapterType(UINT uType);
 
 	static void dump_mib_if_table2(PMIB_IF_TABLE2 pIfTable);
-	static void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses);
+	static void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses, PIP_ADAPTER_ADDRESSES pAdGateways, PMIB_IPADDRTABLE pIPAddrTable);
 };
 #endif // !defined(AFX_IPHELPER_H__609EE787_2041_44FB_863D_75B36F337728__INCLUDED_)
 

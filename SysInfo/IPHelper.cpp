@@ -340,6 +340,8 @@ BOOL CIPHelper::GetNetworkAdapters(CNetworkAdapterList *pList)
 		return FALSE;
 	}
 	
+	dump_ip_adapter_addresses(pAdresses, pAdressesBis, pIPAddrTable);
+
 	WSAData d;
 	if (WSAStartup(MAKEWORD(2, 2), &d) != 0) 
 	{
@@ -568,6 +570,8 @@ BOOL CIPHelper::GetNetworkAdapters(CNetworkAdapterList *pList)
 				}
 			}
 		}
+
+		cAdapter.Clear();
 	}
 	
 	
@@ -1057,8 +1061,10 @@ void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses, PI
 	PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
 	PIP_ADAPTER_GATEWAY_ADDRESS pGateway = NULL;	
 	SOCKET_ADDRESS *pDhcp;
+	CString csMAC;
 	auto family = NULL;
 	UINT ifIndex;
+	char str[INET_ADDRSTRLEN], bufferstr[INET_ADDRSTRLEN], bufferRez[INET_ADDRSTRLEN];
 
 	AddLog(_T("\n================= TRACE START ===============\n"));
 	AddLog(_T("SYSINFO => Dumping IP Addapter Addresses\n"));
@@ -1118,7 +1124,7 @@ void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses, PI
 			  memset(buf3, 0, BUFSIZ);
 			  getnameinfo(pDhcp->lpSockaddr, pDhcp->iSockaddrLength, buf3, sizeof(buf3), NULL, 0, NI_NUMERICHOST);
 			  cAdapter.SetDhcpServer(CA2W(buf3));
-			  AddLog(_T("        IPv4 DHCP Server: %s\n"), cAdapter.GetDHCPServer());
+			  AddLog(_T("        IPv4 DHCP Server: %s\n"), cAdapter.GetDhcpServer());
 			  delete pDhcp;
 			}
 		      
@@ -1148,25 +1154,29 @@ void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses, PI
 					      if (pAdapterAddr->IfIndex == pIPAddrTable->table[ifIndex].dwIndex)
 						{
 						  ULONG ipMsk, ipAdr;
+						  IN_ADDR IPAddr, IPAddrBis, ipa;
+						  CString csSubnet, csAddressIp, csSubnetNetwork;
 						  
 						  // Get NetMask
-						  IN_ADDR IPAddr.S_un.S_addr = (u_long)pIPAddrTable->table[ifIndex].dwMask;
-						  IN_ADDR IPAddrBis.S_un.S_addr = (u_long)pIPAddrTable->table[ifIndex].dwAddr;
-						  CSTRING csSubnet = inet_ntop(AF_INET, &IPAddr, str, INET_ADDRSTRLEN);
-						  CSTRING csAddressIp = inet_ntop(AF_INET, &IPAddrBis, bufferstr, INET_ADDRSTRLEN);
+						  IPAddr.S_un.S_addr = (u_long)pIPAddrTable->table[ifIndex].dwMask;
+						  IPAddrBis.S_un.S_addr = (u_long)pIPAddrTable->table[ifIndex].dwAddr;
+						  csSubnet = inet_ntop(AF_INET, &IPAddr, str, INET_ADDRSTRLEN);
+						  csAddressIp = inet_ntop(AF_INET, &IPAddrBis, bufferstr, INET_ADDRSTRLEN);
 						  
+						  cAdapter.SetIPNetMask(csSubnet);
+						  AddLog(_T("        Netmask IPv4: %s\n"), cAdapter.GetIPNetMask());
+
 						  inet_pton(AF_INET, bufferstr, &ipAdr);
 						  inet_pton(AF_INET, str, &ipMsk);
 						  ULONG nbRez = htonl(ipAdr & ipMsk);
 						  
-						  IN_ADDR ipa.S_un.S_addr = htonl(nbRez);
-						  CSTRING csSubnetNetwork = inet_ntop(AF_INET, &ipa, bufferRez, INET_ADDRSTRLEN);
+						  ipa.S_un.S_addr = htonl(nbRez);
+						  csSubnetNetwork = inet_ntop(AF_INET, &ipa, bufferRez, INET_ADDRSTRLEN);
 						  cAdapter.SetNetNumber(csSubnetNetwork);
-						}
+						  AddLog(_T("        Network IPv4: %s\n"), cAdapter.GetNetNumber());
+						  }
 					    }
 					  // No break???
-					  cAdapter.SetIPNetMask(csSubnet);
-					  AddLog(_T("        Netmask IPv4: %s\n"), cAdapter.GetIPNetMask());
 					}
 				    }
 				}
@@ -1175,18 +1185,20 @@ void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses, PI
 		    }
 		  else if (AF_INET6 == family)
 		    {
+			  CString csAddressIp, csDescription;
+
 		      // IPv6
 		      SOCKADDR_IN6* ipv6 = reinterpret_cast<SOCKADDR_IN6*>(pUnicast->Address.lpSockaddr);
 		      char ipv6_buffer[INET6_ADDRSTRLEN] = { 0 };
 		      inet_ntop(AF_INET6, &(ipv6->sin6_addr), ipv6_buffer, INET6_ADDRSTRLEN);
 		      CString IPV6_buf = CA2W(ipv6_buffer);
-		      CSTRING csAddressIp.Format(_T("%s"), IPV6_buf);
+		      csAddressIp.Format(_T("%s"), IPV6_buf);
 		      
 		      if (csAddressIp.Mid(0, 2) != _T("fe"))
 			{
 			  cAdapter.SetIPAddress(CA2W(ipv6_buffer));
 			  
-			  csDescription.Format(_T("%s %s"), pIfEntry->Description, _T("(IPV6)"));
+			  csDescription.Format(_T("%s %s"), pAdapterAddr->Description, _T("(IPV6)"));
 			  // Get the description
 			  cAdapter.SetDescription(csDescription);
 			  AddLog(_T("        Description: %s\n"), cAdapter.GetDescription());
@@ -1202,6 +1214,8 @@ void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses, PI
 			  
 			  if (pPrefix)
 			    {
+				  CString csPrefixLength;
+
 			      char buf_prefix[BUFSIZ];
 			      memset(buf_prefix, 0, BUFSIZ);
 			      getnameinfo(pPrefix->Address.lpSockaddr, pPrefix->Address.iSockaddrLength, buf_prefix, sizeof(buf_prefix), NULL, 0, NI_NUMERICHOST);
@@ -1224,7 +1238,7 @@ void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses, PI
 			      memset(buf3, 0, BUFSIZ);
 			      getnameinfo(pDhcp->lpSockaddr, pDhcp->iSockaddrLength, buf3, sizeof(buf3), NULL, 0, NI_NUMERICHOST);
 			      cAdapter.SetDhcpServer(CA2W(buf3));
-			      AddLog(_T("        IPv6 DHCP Server: %s\n"), cAdapter.GetDHCPServer());
+			      AddLog(_T("        IPv6 DHCP Server: %s\n"), cAdapter.GetDhcpServer());
 			      delete pDhcp;
 			    }
 			  
