@@ -16,28 +16,31 @@ Rem Set path to MS Visual C++
 set VC_PATH=C:\Program Files (x86)\\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build
 
 Rem Set path to MS Windows SDK, needed to build cURL
-set WINDOWS_SDK_PATH="C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A"
+set WINDOWS_SDK_PATH="C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A"
 
 Rem Set path to Perl 5.6 or higher binary
-set PERL_PATH=C:\Strawberry\perl\bin
+set PERL_PATH=C:\xampp\perl\bin
+
+Rem Set Repo External_Deps base PATH
+SET REPO_EXT_PATH=C:\Users\jjiglesias\Documents\Repos\External_Deps
 
 Rem Set path to Zlib sources
-set ZLIB_PATH=C:\Users\Admin\Documents\GitHub\WindowsAgent\External_Deps\zlib-1.2.8
+set ZLIB_PATH=%REPO_EXT_PATH%\zlib-1.2.11
 
 Rem Set path to OpenSSL sources
-set OPENSSL_PATH=C:\Users\Admin\Documents\GitHub\WindowsAgent\External_Deps\openssl-1.0.2r
+set OPENSSL_PATH=%REPO_EXT_PATH%\openssl-1.0.2u
 
 Rem Set path to cURL sources
-set CURL_PATH=C:\Users\Admin\Documents\GitHub\WindowsAgent\External_Deps\curl-7.64.1\src
+set CURL_PATH=%REPO_EXT_PATH%\curl-7.73.0\src
 
 Rem Set path to tinyXML sources
-SET XML_PATH=C:\Users\Admin\Documents\GitHub\WindowsAgent\External_Deps\tinyxml
+SET XML_PATH=%REPO_EXT_PATH%\tinyxml
 
 Rem Set path to ZipArchive sources, for example
-SET ZIP_PATH=C:\Users\Admin\Documents\GitHub\WindowsAgent\External_Deps\ZipArchive
+SET ZIP_PATH=%REPO_EXT_PATH%\ZipArchive
 
 Rem Set path to Net-SNMP sources, for example
-SET SNMP_PATH=C:\Users\Admin\Documents\GitHub\WindowsAgent\External_Deps\net-snmp-5.7.3
+SET SNMP_PATH=%REPO_EXT_PATH%\net-snmp-5.7.3
 
 Rem ========= DO NOT MODIFY BELOW, UNTIL YOU KNOW WHAT YOU ARE DOING =========
 
@@ -83,7 +86,7 @@ echo.
 cd "%OPENSSL_PATH%"
 
 Rem Configure OpenSSL for MS Visual C++ with lastest Service Pack ( -D_BIND_TO_CURRENT_VCLIBS_VERSION)
-perl.exe configure no-asm VC-WIN64A -D_BIND_TO_CURRENT_VCLIBS_VERSION -D_WINSOCK_DEPRECATED_NO_WARNINGS
+perl.exe configure no-asm VC-WIN64A -D_BIND_TO_CURRENT_VCLIBS_VERSION -D_WINSOCK_DEPRECATED_NO_WARNINGS -D_OPENSSL_FIPS
 if ERRORLEVEL 1 goto ERROR
 Rem Prepare OpenSSL build for MS Visual C++
 call ms\do_win64a
@@ -101,8 +104,8 @@ if ERRORLEVEL 1 goto ERROR
 Rem copy libs to use them in OCS
 copy ssleay32.lib ..\..
 copy libeay32.lib ..\..
-copy libeay32.lib ..\..\curl-7.64.1\winbuild
-copy ssleay32.lib ..\..\curl-7.64.1\winbuild
+copy libeay32.lib ..\..\curl-7.73.0\winbuild
+copy ssleay32.lib ..\..\curl-7.73.0\winbuild
 copy ssleay32.dll ..\..\..\Release
 copy libeay32.dll ..\..\..\Release
 copy ssleay32.dll ..\..\..\Debug

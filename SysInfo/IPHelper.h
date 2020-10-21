@@ -18,6 +18,7 @@
 #pragma once
 
 #include "SysInfoClasses.h"
+#include <netioapi.h>
 
 #define ETHERNET_ADAPTER	_T( "Ethernet")
 #define TOKENBUS_ADAPTER	_T( "Token Bus")
@@ -55,6 +56,9 @@ public: // Methods
 	static BOOL IsDSL(UINT uType);
 	static BOOL IsLoopback(UINT uType);
 	static LPCTSTR GetAdapterType(UINT uType);
+
+	static void dump_mib_if_table2(PMIB_IF_TABLE2 pIfTable);
+	static void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses);
 };
 #endif // !defined(AFX_IPHELPER_H__609EE787_2041_44FB_863D_75B36F337728__INCLUDED_)
 

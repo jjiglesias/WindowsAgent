@@ -85,6 +85,7 @@ BOOL CInventoryRequest::initInventory()
 	m_pTheDB	= new CXMLInteract(&m_cmXml);
 	m_pState	= new COCSInventoryState;
 	m_pPluginState	= new COCSInventoryState;
+	m_pLogger->log(LOG_PRIORITY_DEBUG, _T("JJIR => isDebugRequired??: %d"), getAgentConfig()->isDebugRequired());
 	m_pSysInfo	= new CSysInfo( getAgentConfig()->isDebugRequired() >= OCS_DEBUG_MODE_TRACE, getDataFolder());
 
 	m_Device.SetDeviceName( m_pDeviceid->getComputerName());

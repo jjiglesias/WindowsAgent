@@ -222,6 +222,7 @@ BOOL CIPHelper::GetNetworkAdapters(CNetworkAdapterList *pList)
 	// Call GetAdptersAddresses with length to 0 to get size of required buffer
 	AddLog(_T("OK\nIpHlpAPI GetNetworkAdapters: Calling GetAdapterAddresses to determine IP Gateway..."));
 	pAdressesBis = NULL;
+	dump_mib_if_table2(pIfTable);
 
 	switch (lpfnGetAdaptersAddresses(AF_UNSPEC, GAA_FLAG_INCLUDE_GATEWAYS, NULL, pAdressesBis, &size))
 	{
@@ -344,8 +345,6 @@ BOOL CIPHelper::GetNetworkAdapters(CNetworkAdapterList *pList)
 	{
 	}
 
-	_dump_mib_if_table2(&pIfTable);
-	
 	// Call GetIfTable2Ex for each interface
 	for (dwIndex = 0; dwIndex < pIfTable->NumEntries; dwIndex++)
 	{
@@ -800,155 +799,156 @@ LPCTSTR CIPHelper::GetIfType(UINT uType)
 	// See http://www.iana.org/assignments/ianaiftype-mib
 	switch (uType)
 	{
-		case 1: return _T("Other");
-		case 2: return _T("regular1822");
-		case 3: return _T("hdh1822");
-		case 4: return _T("ddnX25");
-		case 5: return _T("rfc877x25");
-		case 6: return _T("ethernetCsmacd");
-		case 7: return _T("iso88023Csmacd");
-		case 8: return _T("iso88024TokenBus");
-		case 9: return _T("iso88025TokenRing");
-		case 10: return _T("iso88026Man");
-		case 11: return _T("starLan");
-		case 12: return _T("proteon10Mbit");
-		case 13: return _T("proteon80Mbit");
-		case 14: return _T("hyperchannel");
-		case 15: return _T("fddi");
-		case 16: return _T("lapb");
-		case 17: return _T("sdlc");
-		case 18: return _T("ds1");
-		case 19: return _T("e1");
-		case 20: return _T("basicISDN");
-		case 21: return _T("primaryISDN");
-		case 22: return _T("propPointToPointSerial");
-		case 23: return _T("ppp");
-		case 24: return _T("softwareLoopback");
-		case 25: return _T("eon");
-		case 26: return _T("ethernet-3Mbit");
-		case 27: return _T("nsip");
-		case 28: return _T("slip");
-		case 29: return _T("ultra");
-		case 30: return _T("ds3");
-		case 31: return _T("sip");
-		case 32: return _T("frame-relay");
-		case 33: return _T("rs232");
-		case 34: return _T("para");
-		case 35: return _T("arcnet");
-		case 36: return _T("arcnetPlus");
-		case 37: return _T("atm");
-		case 38: return _T("miox25");
-		case 39: return _T("sonet");
-		case 40: return _T("x25ple");
-		case 41: return _T("iso88022llc");
-		case 42: return _T("localTalk");
-		case 43: return _T("smdsDxi");
-		case 44: return _T("frameRelayService");
-		case 45: return _T("v35");
-		case 46: return _T("hssi");
-		case 47: return _T("hippi");
-		case 48: return _T("modem");
-		case 49: return _T("aal5");
-		case 50: return _T("sonetPath");
-		case 51: return _T("sonetVT");
-		case 52: return _T("smdsIcip");
-		case 53: return _T("propVirtual");
-		case 54: return _T("propMultiplexor");
-		case 55: return _T("100BaseVG");
-		case 56: return _T("Fibre Channel");
-		case 57: return _T("HIPPI Interface");
-		case 58: return _T("Obsolete for FrameRelay");
-		case 59: return _T("ATM Emulation of 802.3 LAN");
-		case 60: return _T("ATM Emulation of 802.5 LAN");
-		case 61: return _T("ATM Emulation of a Circuit");
-		case 62: return _T("FastEthernet (100BaseT)");
-		case 63: return _T("ISDN & X.25");
-		case 64: return _T("CCITT V.11/X.21");
-		case 65: return _T("CCITT V.36");
-		case 66: return _T("CCITT G703 at 64Kbps");
-		case 67: return _T("Obsolete G702 see DS1-MIB");
-		case 68: return _T("SNA QLLC");
-		case 69: return _T("Full Duplex Fast Ethernet (100BaseFX)");
-		case 70: return _T("Channel");
-		case 71: return _T("Radio Spread Spectrum (802.11)");
-		case 72: return _T("IBM System 360/370 OEMI Channel");
-		case 73: return _T("IBM Enterprise Systems Connection");
-		case 74: return _T("Data Link Switching");
-		case 75: return _T("ISDN S/T Interface");
-		case 76: return _T("ISDN U Interface");
-		case 77: return _T("Link Access Protocol D (LAPD)");
-		case 78: return _T("IP Switching Opjects");
-		case 79: return _T("Remote Source Route Bridging");
-		case 80: return _T("ATM Logical Port");
-		case 81: return _T("AT&T DS0 Point (64 Kbps)");
-		case 82: return _T("AT&T Group of DS0 on a single DS1");
-		case 83: return _T("BiSync Protocol (BSC)");
-		case 84: return _T("Asynchronous Protocol");
-		case 85: return _T("Combat Net Radio");
-		case 86: return _T("ISO 802.5r DTR");
-		case 87: return _T("Ext Pos Loc Report Sys");
-		case 88: return _T("Apple Talk Remote Access Protocol");
-		case 89: return _T("Proprietary Connectionless Protocol");
-		case 90: return _T("CCITT-ITU X.29 PAD Protocol");
-		case 91: return _T("CCITT-ITU X.3 PAD Facility");
-		case 92: return _T("MultiProtocol Connection over Frame/Relay");
-		case 93: return _T("CCITT-ITU X213");
-		case 94: return _T("Asymmetric Digital Subscriber Loop (ADSL)");
-		case 95: return _T("Rate-Adapt Digital Subscriber Loop (RDSL)");
-		case 96: return _T("Symmetric Digital Subscriber Loop (SDSL)");
-		case 97: return _T("Very High Speed Digital Subscriber Loop (HDSL)");
-		case 98: return _T("ISO 802.5 CRFP");
-		case 99: return _T("Myricom Myrinet");
-		case 100: return _T("Voice recEive and transMit (voiceEM)");
-		case 101: return _T("Voice Foreign eXchange Office (voiceFXO)");
-		case 102: return _T("Voice Foreign eXchange Station (voiceFXS)");
-		case 103: return _T("Voice Encapsulation");
-		case 104: return _T("Voice Over IP Encapsulation");
-		case 105: return _T("ATM DXI");
-		case 106: return _T("ATM FUNI");
-		case 107: return _T("ATM IMA");
-		case 108: return _T("PPP Multilink Bundle");
-		case 109: return _T("IBM IP over CDLC");
-		case 110: return _T("IBM Common Link Access to Workstation");
-		case 111: return _T("IBM Stack to Stack");
-		case 112: return _T("IBM Virtual IP Address (VIPA)");
-		case 113: return _T("IBM Multi-Protocol Channel Support");
-		case 114: return _T("IBM IP over ATM");
-		case 115: return _T("ISO 802.5j Fiber Token Ring");
-		case 116: return _T("IBM Twinaxial Data Link Control (TDLC)");
-		case 117: return _T("Gigabit Ethernet");
-		case 118: return _T("Higher Data Link Control (HDLC)");
-		case 119: return _T("Link Access Protocol F (LAPF)");
-		case 120: return _T("CCITT V.37");
-		case 121: return _T("CCITT X.25 Multi-Link Protocol");
-		case 122: return _T("CCITT X.25 Hunt Group");
-		case 123: return _T("Transp HDLC");
-		case 124: return _T("Interleave Channel");
-		case 125: return _T("Fast Channel");
-		case 126: return _T("IP (for APPN HPR in IP Networks)");
-		case 127: return _T("CATV MAC Layer");
-		case 128: return _T("CATV Downstream Interface");
-		case 129: return _T("CATV Upstream Interface");
-		case 130: return _T("Avalon Parallel Processor");
-		case 131: return _T("Encapsulation Interface");
-		case 132: return _T("Coffee Pot");
-		case 133: return _T("Circuit Emulation Service");
-		case 134: return _T("ATM Sub Interface");
-		case 135: return _T("Layer 2 Virtual LAN using 802.1Q");
-		case 136: return _T("Layer 3 Virtual LAN using IP");
-		case 137: return _T("Layer 3 Virtual LAN using IPX");
-		case 138: return _T("IP Over Power Lines");
-		case 139: return _T("Multi-Media Mail over IP");
-		case 140: return _T("Dynamic synchronous Transfer Mode (DTM)");
-		case 141: return _T("Data Communications Network");
-		case 142: return _T("IP Forwarding Interface");
-		case 143: return _T("Multi-rate Symmetric DSL (MSDSL)");
-		case 144: return _T("IEEE1394 High Perf Serial Bus");
-		case 145: return _T("TV adapter type");
-		case 162: return _T("Cisco Express Forwarding Interface");
-		default: return _T("");
+	case 1: return _T("Other");
+	case 2: return _T("regular1822");
+	case 3: return _T("hdh1822");
+	case 4: return _T("ddnX25");
+	case 5: return _T("rfc877x25");
+	case 6: return _T("ethernetCsmacd");
+	case 7: return _T("iso88023Csmacd");
+	case 8: return _T("iso88024TokenBus");
+	case 9: return _T("iso88025TokenRing");
+	case 10: return _T("iso88026Man");
+	case 11: return _T("starLan");
+	case 12: return _T("proteon10Mbit");
+	case 13: return _T("proteon80Mbit");
+	case 14: return _T("hyperchannel");
+	case 15: return _T("fddi");
+	case 16: return _T("lapb");
+	case 17: return _T("sdlc");
+	case 18: return _T("ds1");
+	case 19: return _T("e1");
+	case 20: return _T("basicISDN");
+	case 21: return _T("primaryISDN");
+	case 22: return _T("propPointToPointSerial");
+	case 23: return _T("ppp");
+	case 24: return _T("softwareLoopback");
+	case 25: return _T("eon");
+	case 26: return _T("ethernet-3Mbit");
+	case 27: return _T("nsip");
+	case 28: return _T("slip");
+	case 29: return _T("ultra");
+	case 30: return _T("ds3");
+	case 31: return _T("sip");
+	case 32: return _T("frame-relay");
+	case 33: return _T("rs232");
+	case 34: return _T("para");
+	case 35: return _T("arcnet");
+	case 36: return _T("arcnetPlus");
+	case 37: return _T("atm");
+	case 38: return _T("miox25");
+	case 39: return _T("sonet");
+	case 40: return _T("x25ple");
+	case 41: return _T("iso88022llc");
+	case 42: return _T("localTalk");
+	case 43: return _T("smdsDxi");
+	case 44: return _T("frameRelayService");
+	case 45: return _T("v35");
+	case 46: return _T("hssi");
+	case 47: return _T("hippi");
+	case 48: return _T("modem");
+	case 49: return _T("aal5");
+	case 50: return _T("sonetPath");
+	case 51: return _T("sonetVT");
+	case 52: return _T("smdsIcip");
+	case 53: return _T("propVirtual");
+	case 54: return _T("propMultiplexor");
+	case 55: return _T("100BaseVG");
+	case 56: return _T("Fibre Channel");
+	case 57: return _T("HIPPI Interface");
+	case 58: return _T("Obsolete for FrameRelay");
+	case 59: return _T("ATM Emulation of 802.3 LAN");
+	case 60: return _T("ATM Emulation of 802.5 LAN");
+	case 61: return _T("ATM Emulation of a Circuit");
+	case 62: return _T("FastEthernet (100BaseT)");
+	case 63: return _T("ISDN & X.25");
+	case 64: return _T("CCITT V.11/X.21");
+	case 65: return _T("CCITT V.36");
+	case 66: return _T("CCITT G703 at 64Kbps");
+	case 67: return _T("Obsolete G702 see DS1-MIB");
+	case 68: return _T("SNA QLLC");
+	case 69: return _T("Full Duplex Fast Ethernet (100BaseFX)");
+	case 70: return _T("Channel");
+	case 71: return _T("Radio Spread Spectrum (802.11)");
+	case 72: return _T("IBM System 360/370 OEMI Channel");
+	case 73: return _T("IBM Enterprise Systems Connection");
+	case 74: return _T("Data Link Switching");
+	case 75: return _T("ISDN S/T Interface");
+	case 76: return _T("ISDN U Interface");
+	case 77: return _T("Link Access Protocol D (LAPD)");
+	case 78: return _T("IP Switching Opjects");
+	case 79: return _T("Remote Source Route Bridging");
+	case 80: return _T("ATM Logical Port");
+	case 81: return _T("AT&T DS0 Point (64 Kbps)");
+	case 82: return _T("AT&T Group of DS0 on a single DS1");
+	case 83: return _T("BiSync Protocol (BSC)");
+	case 84: return _T("Asynchronous Protocol");
+	case 85: return _T("Combat Net Radio");
+	case 86: return _T("ISO 802.5r DTR");
+	case 87: return _T("Ext Pos Loc Report Sys");
+	case 88: return _T("Apple Talk Remote Access Protocol");
+	case 89: return _T("Proprietary Connectionless Protocol");
+	case 90: return _T("CCITT-ITU X.29 PAD Protocol");
+	case 91: return _T("CCITT-ITU X.3 PAD Facility");
+	case 92: return _T("MultiProtocol Connection over Frame/Relay");
+	case 93: return _T("CCITT-ITU X213");
+	case 94: return _T("Asymmetric Digital Subscriber Loop (ADSL)");
+	case 95: return _T("Rate-Adapt Digital Subscriber Loop (RDSL)");
+	case 96: return _T("Symmetric Digital Subscriber Loop (SDSL)");
+	case 97: return _T("Very High Speed Digital Subscriber Loop (HDSL)");
+	case 98: return _T("ISO 802.5 CRFP");
+	case 99: return _T("Myricom Myrinet");
+	case 100: return _T("Voice recEive and transMit (voiceEM)");
+	case 101: return _T("Voice Foreign eXchange Office (voiceFXO)");
+	case 102: return _T("Voice Foreign eXchange Station (voiceFXS)");
+	case 103: return _T("Voice Encapsulation");
+	case 104: return _T("Voice Over IP Encapsulation");
+	case 105: return _T("ATM DXI");
+	case 106: return _T("ATM FUNI");
+	case 107: return _T("ATM IMA");
+	case 108: return _T("PPP Multilink Bundle");
+	case 109: return _T("IBM IP over CDLC");
+	case 110: return _T("IBM Common Link Access to Workstation");
+	case 111: return _T("IBM Stack to Stack");
+	case 112: return _T("IBM Virtual IP Address (VIPA)");
+	case 113: return _T("IBM Multi-Protocol Channel Support");
+	case 114: return _T("IBM IP over ATM");
+	case 115: return _T("ISO 802.5j Fiber Token Ring");
+	case 116: return _T("IBM Twinaxial Data Link Control (TDLC)");
+	case 117: return _T("Gigabit Ethernet");
+	case 118: return _T("Higher Data Link Control (HDLC)");
+	case 119: return _T("Link Access Protocol F (LAPF)");
+	case 120: return _T("CCITT V.37");
+	case 121: return _T("CCITT X.25 Multi-Link Protocol");
+	case 122: return _T("CCITT X.25 Hunt Group");
+	case 123: return _T("Transp HDLC");
+	case 124: return _T("Interleave Channel");
+	case 125: return _T("Fast Channel");
+	case 126: return _T("IP (for APPN HPR in IP Networks)");
+	case 127: return _T("CATV MAC Layer");
+	case 128: return _T("CATV Downstream Interface");
+	case 129: return _T("CATV Upstream Interface");
+	case 130: return _T("Avalon Parallel Processor");
+	case 131: return _T("Encapsulation Interface");
+	case 132: return _T("Coffee Pot");
+	case 133: return _T("Circuit Emulation Service");
+	case 134: return _T("ATM Sub Interface");
+	case 135: return _T("Layer 2 Virtual LAN using 802.1Q");
+	case 136: return _T("Layer 3 Virtual LAN using IP");
+	case 137: return _T("Layer 3 Virtual LAN using IPX");
+	case 138: return _T("IP Over Power Lines");
+	case 139: return _T("Multi-Media Mail over IP");
+	case 140: return _T("Dynamic synchronous Transfer Mode (DTM)");
+	case 141: return _T("Data Communications Network");
+	case 142: return _T("IP Forwarding Interface");
+	case 143: return _T("Multi-rate Symmetric DSL (MSDSL)");
+	case 144: return _T("IEEE1394 High Perf Serial Bus");
+	case 145: return _T("TV adapter type");
+	case 162: return _T("Cisco Express Forwarding Interface");
+	default: return _T("");
 	}
-	
+}
+
 // typedef struct _MIB_IF_ROW2 {
 //   NET_LUID                   InterfaceLuid;
 //   NET_IFINDEX                InterfaceIndex;
@@ -1002,50 +1002,64 @@ LPCTSTR CIPHelper::GetIfType(UINT uType)
 //   ULONG64                    OutQLen;
 // } MIB_IF_ROW2, *PMIB_IF_ROW2;
  
-	void CIPHelper::_dump_mib_if_table2(PMIB_IF_TABLE2 *pIfTable)
+void CIPHelper::dump_mib_if_table2(PMIB_IF_TABLE2 pIfTable)
 	{
 	  PMIB_IF_ROW2 pIfEntry;
 	  ULONG dwIndex;
 	  CNetworkAdapter cAdapter;
-	  CString csMac;
+	  CString csMAC;
 
-	  m_pLogger->log( LOG_PRIORITY_DEBUG, _T( "SYSINFO => Dumping MIB If Table2"));
+	  AddLog(_T("\n================= TRACE START ===============\n"));
+	  AddLog(_T("SYSINFO => Dumping MIB If Table2\n"));
 	  
 	  for (dwIndex = 0; dwIndex < pIfTable->NumEntries; dwIndex++)
-	    {
-	      pIfEntry = (MIB_IF_ROW2 *)&(pIfTable->Table[dwIndex]);
-	      
-	      if (pIfEntry->Type == IF_TYPE_SOFTWARE_LOOPBACK)
+		{
+		  pIfEntry = (MIB_IF_ROW2 *)&(pIfTable->Table[dwIndex]);
+		  
+		  if (pIfEntry->Type == IF_TYPE_SOFTWARE_LOOPBACK)
 		continue;
-	      
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("    "));
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        "));
-	      // Get the Index
-	      cAdapter.SetIfIndex(pIfEntry->InterfaceIndex);
-	      // Get the type
-	      cAdapter.SetType(GetAdapterType(pIfEntry->Type));
-	      // Get the MIB type
-	      cAdapter.SetTypeMIB(GetIfType(pIfEntry->Type));
-	      // Get the description;
-	      cAdapter.SetDescription(pIfEntry->Description);
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("    Interface Idx: %l", cAdapter.GetIfIndex()));
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Alias: %s", pIfEntry->Alias));
+		  
+		  //AddLog(_T("    "));
+		  //AddLog(_T("        "));
+		  // Get the Index
+		  cAdapter.SetIfIndex(pIfEntry->InterfaceIndex);
+		  // Get the type
+		  cAdapter.SetType(GetAdapterType(pIfEntry->Type));
+		  // Get the MIB type
+		  cAdapter.SetTypeMIB(GetIfType(pIfEntry->Type));
+		  // Get the description;
+		  cAdapter.SetDescription(pIfEntry->Description);
+		  AddLog(_T("    Interface Idx: %ld\n"), cAdapter.GetIfIndex());
+		  AddLog(_T("        Alias: %s\n"), pIfEntry->Alias);
 
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Description: %s", cAdapter.GetDescription()));
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Type: %s", cAdapter.GetType()));
+		  AddLog(_T("        Description: %s\n"), cAdapter.GetDescription());
+		  AddLog(_T("        Type: %s\n"), cAdapter.GetType());
 
-	      csMAC.Format(_T("%02X:%02X:%02X:%02X:%02X:%02X"),
+		  csMAC.Format(_T("%02X:%02X:%02X:%02X:%02X:%02X"),
 			   pIfEntry->PhysicalAddress[0], pIfEntry->PhysicalAddress[1],
 			   pIfEntry->PhysicalAddress[2], pIfEntry->PhysicalAddress[3],
 			   pIfEntry->PhysicalAddress[4], pIfEntry->PhysicalAddress[5]);
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        MAC: %s", (LPCTSTR)csMAC));
+		  AddLog(_T("        MAC: %s\n"), (LPCTSTR)csMAC);
 
-	      cAdapter.SetIpHelperStatus(pIfEntry->OperStatus);
-	      cAdapter.SetSpeed(pIfEntry->TransmitLinkSpeed);
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Status: %s", cAdapter.GetOperationalStatus()));
-	      m_pLogger->log(LOG_PRIORITY_DEBUG, _T("        Speed: %s", cAdapter.GetSpeed()));
-	    }	      
-	      // AGENT => Loading plug-in(s)
-	      //     DLL PLUGIN => Searching for Plug-in DLL(s) in folder <C:\Program Files\OCS Inventory Agent\plugins>
+		  cAdapter.SetIpHelperStatus(pIfEntry->OperStatus);
+		  cAdapter.SetSpeed(pIfEntry->TransmitLinkSpeed);
+		  AddLog(_T("        Status: %s\n"), cAdapter.GetOperationalStatus());
+		  AddLog(_T("        Speed: %s\n"), cAdapter.GetSpeed());
+		}
+
+		AddLog(_T("================= TRACE END ===============\n\n"));
 	}
+
+void CIPHelper::dump_ip_adapter_addresses(PIP_ADAPTER_ADDRESSES pAdAddresses)
+{
+	PIP_ADAPTER_ADDRESSES pAdapterAddr;
+
+	AddLog(_T("\n================= TRACE START ===============\n"));
+	AddLog(_T("SYSINFO => Dumping MIB If Table2\n"));
+
+	for (pAdapterAddr = pAdAddresses; pAdapterAddr != NULL; pAdapterAddr = pAdapterAddr->Next)
+	{
+	}
+
+	AddLog(_T("================= TRACE END ===============\n\n"));
 }

@@ -150,7 +150,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\External_Deps\zlib-1.2.8;..\External_Deps\openssl-1.0.2r\inc32;..\External_Deps\tinyxml;../OcsWmi;..\Sysinfo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External_Deps\zlib-1.2.11;..\External_Deps\openssl-1.0.2u\inc32;..\External_Deps\tinyxml;../OcsWmi;..\Sysinfo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

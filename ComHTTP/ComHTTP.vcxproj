@@ -150,7 +150,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\External_Deps\openssl-1.0.2r\inc32;..\External_Deps\curl-7.64.1\include;..\External_Deps\tinyxml;..\OCSInventory Front;..\OcsWmi;..\SysInfo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External_Deps\openssl-1.0.2u\inc32;..\External_Deps\curl-7.73.0\include;..\External_Deps\tinyxml;..\OCSInventory Front;..\OcsWmi;..\SysInfo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

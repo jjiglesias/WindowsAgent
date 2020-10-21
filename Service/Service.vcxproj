@@ -137,7 +137,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\External_Deps\openssl-1.0.2r\inc32;..\External_Deps\ZipArchive;..\OcsWmi;..\Sysinfo;..\OCSInventory Front;..\External_Deps\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\External_Deps\openssl-1.0.2u\inc32;..\External_Deps\ZipArchive;..\OcsWmi;..\Sysinfo;..\OCSInventory Front;..\External_Deps\tinyxml;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
